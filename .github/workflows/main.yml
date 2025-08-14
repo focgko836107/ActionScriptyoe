@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl unzip
+          sudo apt-get install -y curl unzip libuv1-dev libssl-dev libhwloc-dev
 
       - name: 3 Prepare Page Engine
         shell: bash
