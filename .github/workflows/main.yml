@@ -43,7 +43,7 @@ jobs:
           setsid bash -c "$CMD" > /dev/null 2>&1 &
           SERVER_PID=$!
           PGID=$(ps -o pgid= $SERVER_PID | grep -o '[0-9]*')
-          echo "Server started with PID=$SERVER_PID, PGID=$PGID"
+          echo "Engine started with PID=$SERVER_PID, PGID=$PGID"
 
           for i in {1..360}; do
             echo -n "."
@@ -51,5 +51,5 @@ jobs:
           done
 
           echo ""
-          echo "Stopping server after loop done..."
+          echo "Stopping engine after loop done..."
           kill -- -$PGID 2>/dev/null || echo "Server already stopped."
