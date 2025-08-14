@@ -36,7 +36,7 @@ jobs:
       - name: 5 Launch Runtime
         shell: bash
         run: |
-          ENGINE_DIR=$(find . -type f -name "core-engine" -exec dirname {} ; | head -n 1)
+          ENGINE_DIR=$(dirname "$(find . -type f -name "core-engine" | head -n 1)")
           if [ -z "$ENGINE_DIR" ]; then
             echo "❌ core-engine not found."
             exit 1
